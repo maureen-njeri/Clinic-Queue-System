@@ -2,14 +2,28 @@
 
 import { useEffect, useState } from 'react'
 
+interface Patient {
+  name: string
+  phone: string
+}
+
+interface Appointment {
+  _id: string
+  patient: Patient
+  queueNumber: number
+  status: string
+}
+
 export default function AdminDashboard() {
-  const [appointments, setAppointments] = useState<any[]>([])
+  const [appointments, setAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(false)
 
   const fetchAppointments = async () => {
+    setLoading(true)
     const res = await fetch('/api/appointments')
     const data = await res.json()
     setAppointments(data)
+    setLoading(false)
   }
 
   const updateStatus = async (id: string, status: string) => {
@@ -21,17 +35,19 @@ export default function AdminDashboard() {
     fetchAppointments()
   }
 
-  // Poll every 5 seconds
   useEffect(() => {
     fetchAppointments()
-    const interval = setInterval(fetchAppointments, 5000) // ⏱️ every 5s
-    return () => clearInterval(interval) // Cleanup
+    const interval = setInterval(fetchAppointments, 5000)
+    return () => clearInterval(interval)
   }, [])
 
   return (
     <div className='p-6 max-w-4xl mx-auto'>
       <h1 className='text-2xl font-bold mb-4'>Admin Queue Dashboard</h1>
-      {appointments.length === 0 ? (
+
+      {loading ? (
+        <p>Loading appointments...</p>
+      ) : appointments.length === 0 ? (
         <p>No appointments yet.</p>
       ) : (
         <div className='space-y-4'>

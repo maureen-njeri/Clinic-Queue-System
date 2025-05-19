@@ -2,9 +2,15 @@
 
 import { useState } from 'react'
 
+interface QueueStatus {
+  currentQueue: number
+  yourQueue: number | null
+  error?: string
+}
+
 export default function QueueStatusPage() {
   const [phone, setPhone] = useState('')
-  const [status, setStatus] = useState<any>(null)
+  const [status, setStatus] = useState<QueueStatus | null>(null)
   const [loading, setLoading] = useState(false)
 
   const checkStatus = async () => {
@@ -18,6 +24,7 @@ export default function QueueStatusPage() {
   return (
     <div className='p-6 max-w-xl mx-auto'>
       <h1 className='text-2xl font-bold mb-4'>Check Queue Status</h1>
+
       <input
         type='tel'
         placeholder='Enter Phone Number'
@@ -25,6 +32,7 @@ export default function QueueStatusPage() {
         onChange={(e) => setPhone(e.target.value)}
         className='w-full p-2 border rounded mb-4'
       />
+
       <button
         onClick={checkStatus}
         disabled={loading}
@@ -43,7 +51,11 @@ export default function QueueStatusPage() {
           </p>
           <p>
             People Ahead:{' '}
-            <strong>{(status.yourQueue ?? 0) - status.currentQueue}</strong>
+            <strong>
+              {status.yourQueue === null
+                ? 'N/A'
+                : Math.max(status.yourQueue - status.currentQueue, 0)}
+            </strong>
           </p>
         </div>
       )}
