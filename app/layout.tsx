@@ -1,4 +1,4 @@
-import './global.css'       // match your filename here
+import './globals.css'
 import { ReactNode } from 'react'
 
 export const metadata = {
@@ -8,10 +8,10 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <head>
         <title>{metadata.title}</title>
-        <meta name="description" content={metadata.description} />
+        <meta name='description' content={metadata.description} />
       </head>
       <body>{children}</body>
     </html>
