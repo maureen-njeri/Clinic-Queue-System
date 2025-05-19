@@ -1,29 +1,25 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import Appointment from '@/models/Appointment'
-import Patient from '@/models/Patient'
 
-export async function POST(req: Request) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   await dbConnect()
-  const { name, phone } = await req.json()
+  const { id } = params
+  const body = await request.json()
 
-  const patient = await Patient.create({ name, phone })
-  const lastAppointment = await Appointment.findOne().sort({ queueNumber: -1 })
-  const nextQueue = lastAppointment ? lastAppointment.queueNumber + 1 : 1
+  // Example: update appointment status using id and body info
+  const updatedAppointment = await Appointment.findByIdAndUpdate(
+    id,
+    { status: body.status },
+    { new: true }
+  )
 
-  await Appointment.create({
-    patient: patient._id,
-    queueNumber: nextQueue,
-  })
+  if (!updatedAppointment) {
+    return NextResponse.json({ error: 'Appointment not found' }, { status: 404 })
+  }
 
-  return NextResponse.json({ queueNumber: nextQueue }, { status: 201 })
-}
-
-export async function GET() {
-  await dbConnect()
-  const appointments = await Appointment.find()
-    .populate('patient')
-    .sort({ queueNumber: 1 })
-
-  return NextResponse.json(appointments)
+  return NextResponse.json(updatedAppointment)
 }
