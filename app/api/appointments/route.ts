@@ -1,25 +1,28 @@
-import { NextRequest, NextResponse } from 'next/server'
-import dbConnect from '@/lib/mongodb'
-import Appointment from '@/models/Appointment'
+import { NextRequest, NextResponse } from "next/server";
+import dbConnect from "@/lib/mongodb";
+import Appointment from "@/models/Appointment";
+
+interface Params {
+  params: { id: string }
+}
 
 export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  { params }: Params
 ) {
-  await dbConnect()
-  const { id } = params
-  const body = await request.json()
+  await dbConnect();
 
-  // Example: update appointment status using id and body info
-  const updatedAppointment = await Appointment.findByIdAndUpdate(
-    id,
-    { status: body.status },
+  const { status } = await req.json();
+
+  const appointment = await Appointment.findByIdAndUpdate(
+    params.id,
+    { status },
     { new: true }
-  )
+  ).populate("patient");
 
-  if (!updatedAppointment) {
-    return NextResponse.json({ error: 'Appointment not found' }, { status: 404 })
+  if (!appointment) {
+    return NextResponse.json({ error: "Appointment not found" }, { status: 404 });
   }
 
-  return NextResponse.json(updatedAppointment)
+  return NextResponse.json({ success: true, appointment });
 }
