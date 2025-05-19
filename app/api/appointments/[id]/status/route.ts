@@ -4,16 +4,15 @@ import Appointment from '@/models/Appointment'
 
 export async function PUT(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     await dbConnect()
 
-    const { id } = context.params
     const { status } = await req.json()
 
     const appointment = await Appointment.findByIdAndUpdate(
-      id,
+      params.id,
       { status },
       { new: true }
     ).populate('patient')
@@ -27,6 +26,7 @@ export async function PUT(
 
     return NextResponse.json({ success: true, appointment }, { status: 200 })
   } catch (error) {
+    console.error(error)
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
