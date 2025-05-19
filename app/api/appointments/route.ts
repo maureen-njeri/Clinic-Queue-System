@@ -1,14 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "@/lib/mongodb";
-import Appointment from "@/models/Appointment";
+import { NextRequest, NextResponse } from 'next/server';
+import dbConnect from '@/lib/mongodb';
+import Appointment from '@/models/Appointment';
 
-interface Params {
-  params: { id: string }
-}
-
+// Use the correct Next.js parameter convention
 export async function PUT(
   req: NextRequest,
-  { params }: Params
+  { params }: { params: { id: string } }
 ) {
   await dbConnect();
 
@@ -18,10 +15,10 @@ export async function PUT(
     params.id,
     { status },
     { new: true }
-  ).populate("patient");
+  ).populate('patient');
 
   if (!appointment) {
-    return NextResponse.json({ error: "Appointment not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Appointment not found' }, { status: 404 });
   }
 
   return NextResponse.json({ success: true, appointment });
