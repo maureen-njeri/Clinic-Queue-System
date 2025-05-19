@@ -18,3 +18,12 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ queueNumber: nextQueue }, { status: 201 });
 }
+
+export async function GET() {
+  await dbConnect();
+  const appointments = await Appointment.find()
+    .populate("patient")
+    .sort({ queueNumber: 1 });
+
+  return NextResponse.json(appointments);
+}

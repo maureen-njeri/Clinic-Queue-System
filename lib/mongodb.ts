@@ -13,10 +13,16 @@ if (!cached) {
 }
 
 async function dbConnect() {
-  if (cached.conn) return cached.conn;
+  if (cached.conn) {
+    console.log("🔁 Using cached MongoDB connection");
+    return cached.conn;
+  }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI).then(m => m.connection);
+    cached.promise = mongoose.connect(MONGODB_URI).then(m => {
+      console.log("✅ MongoDB connected successfully");
+      return m.connection;
+    });
   }
 
   cached.conn = await cached.promise;
