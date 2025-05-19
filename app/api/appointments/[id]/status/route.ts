@@ -4,14 +4,14 @@ import Appointment from '@/models/Appointment';
 
 export async function PUT(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   await dbConnect();
 
   const { status } = await req.json();
 
   const appointment = await Appointment.findByIdAndUpdate(
-    context.params.id,
+    params.id,
     { status },
     { new: true }
   ).populate("patient");
