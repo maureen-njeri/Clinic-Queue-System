@@ -2,30 +2,28 @@
 
 import { useEffect, useState } from 'react'
 
-// Define a proper type for appointment
+interface Patient {
+  name: string
+  phone: string
+}
+
 interface Appointment {
   _id: string
+  patient: Patient
   queueNumber: number
-  status: 'pending' | 'in-progress' | 'done'
-  patient: {
-    name: string
-    phone: string
-  }
+  status: string
 }
 
 export default function AdminDashboard() {
   const [appointments, setAppointments] = useState<Appointment[]>([])
-  const [loading, setLoading] = useState(false)
 
   const fetchAppointments = async () => {
-    setLoading(true)
     const res = await fetch('/api/appointments')
     const data = await res.json()
     setAppointments(data)
-    setLoading(false)
   }
 
-  const updateStatus = async (id: string, status: 'in-progress' | 'done') => {
+  const updateStatus = async (id: string, status: string) => {
     await fetch(`/api/appointments/${id}/status`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -43,10 +41,7 @@ export default function AdminDashboard() {
   return (
     <div className='p-6 max-w-4xl mx-auto'>
       <h1 className='text-2xl font-bold mb-4'>Admin Queue Dashboard</h1>
-
-      {loading ? (
-        <p>Loading appointments...</p>
-      ) : appointments.length === 0 ? (
+      {appointments.length === 0 ? (
         <p>No appointments yet.</p>
       ) : (
         <div className='space-y-4'>
