@@ -1,51 +1,75 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
+
+// Define a proper type for appointment
+interface Appointment {
+  _id: string
+  queueNumber: number
+  status: 'pending' | 'in-progress' | 'done'
+  patient: {
+    name: string
+    phone: string
+  }
+}
 
 export default function AdminDashboard() {
-  const [appointments, setAppointments] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [appointments, setAppointments] = useState<Appointment[]>([])
+  const [loading, setLoading] = useState(false)
 
   const fetchAppointments = async () => {
-    const res = await fetch('/api/appointments');
-    const data = await res.json();
-    setAppointments(data);
-  };
+    setLoading(true)
+    const res = await fetch('/api/appointments')
+    const data = await res.json()
+    setAppointments(data)
+    setLoading(false)
+  }
 
-  const updateStatus = async (id: string, status: string) => {
+  const updateStatus = async (id: string, status: 'in-progress' | 'done') => {
     await fetch(`/api/appointments/${id}/status`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),
-    });
-    fetchAppointments();
-  };
+    })
+    fetchAppointments()
+  }
 
-  // Poll every 5 seconds
   useEffect(() => {
-    fetchAppointments();
-    const interval = setInterval(fetchAppointments, 5000); // ⏱️ every 5s
-    return () => clearInterval(interval); // Cleanup
-  }, []);
+    fetchAppointments()
+    const interval = setInterval(fetchAppointments, 5000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Admin Queue Dashboard</h1>
-      {appointments.length === 0 ? (
+    <div className='p-6 max-w-4xl mx-auto'>
+      <h1 className='text-2xl font-bold mb-4'>Admin Queue Dashboard</h1>
+
+      {loading ? (
+        <p>Loading appointments...</p>
+      ) : appointments.length === 0 ? (
         <p>No appointments yet.</p>
       ) : (
-        <div className="space-y-4">
+        <div className='space-y-4'>
           {appointments.map((appt) => (
-            <div key={appt._id} className="p-4 border rounded shadow-sm bg-white">
-              <p><strong>{appt.patient.name}</strong> ({appt.patient.phone})</p>
-              <p>Queue #: <strong>{appt.queueNumber}</strong></p>
-              <p>Status: <span className="capitalize">{appt.status}</span></p>
+            <div
+              key={appt._id}
+              className='p-4 border rounded shadow-sm bg-white'
+            >
+              <p>
+                <strong>{appt.patient.name}</strong> ({appt.patient.phone})
+              </p>
+              <p>
+                Queue #: <strong>{appt.queueNumber}</strong>
+              </p>
+              <p>
+                Status: <span className='capitalize'>{appt.status}</span>
+              </p>
 
-              <div className="mt-2 space-x-2">
+              <div className='mt-2 space-x-2'>
                 {appt.status !== 'in-progress' && (
                   <button
                     onClick={() => updateStatus(appt._id, 'in-progress')}
-                    className="bg-yellow-500 text-white px-3 py-1 rounded"
+                    className='bg-yellow-500 text-white px-3 py-1 rounded'
                   >
                     In Progress
                   </button>
@@ -53,7 +77,7 @@ export default function AdminDashboard() {
                 {appt.status !== 'done' && (
                   <button
                     onClick={() => updateStatus(appt._id, 'done')}
-                    className="bg-green-600 text-white px-3 py-1 rounded"
+                    className='bg-green-600 text-white px-3 py-1 rounded'
                   >
                     Mark Done
                   </button>
@@ -64,5 +88,5 @@ export default function AdminDashboard() {
         </div>
       )}
     </div>
-  );
+  )
 }
