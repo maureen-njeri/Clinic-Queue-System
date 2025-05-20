@@ -16,6 +16,7 @@ interface Appointment {
 }
 
 export default function AdminDashboard() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   const fetchAppointments = async () => {
@@ -32,6 +33,7 @@ export default function AdminDashboard() {
     });
 
     const channel = pusher.subscribe('appointments');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     channel.bind('status-updated', (data: { id: string; status: string }) => {
       // Refresh appointments when status updates
       fetchAppointments();

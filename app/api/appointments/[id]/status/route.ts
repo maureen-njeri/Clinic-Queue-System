@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '@/utils/db'; // Adjust path if needed
+import connectToDatabase from '../../../../../utils/db';// Adjust path if needed
 import Appointment from '@/models/Appointment';
 import Pusher from 'pusher';
 
