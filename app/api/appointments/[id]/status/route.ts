@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/utils/db';
+import connectToDatabase from '@/utils/db'; // Adjust path if needed
 import Appointment from '@/models/Appointment';
 import Pusher from 'pusher';
 
@@ -32,7 +32,6 @@ export async function PUT(
       return NextResponse.json({ error: 'Appointment not found' }, { status: 404 });
     }
 
-    // Trigger real-time update via Pusher
     await pusher.trigger('appointments', 'status-updated', {
       _id: appointment._id,
       status: appointment.status,
