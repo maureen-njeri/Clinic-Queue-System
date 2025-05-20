@@ -1,25 +1,29 @@
-import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/mongodb';
-import Appointment from '@/models/Appointment';
+import { NextResponse } from "next/server";
+import dbConnect from "@/lib/mongodb";
+import Appointment from "@/models/Appointment";
+import Patient from "@/models/Patient";
 
-// Use the correct Next.js parameter convention
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(req: Request) {
   await dbConnect();
+  const { name, phone } = await req.json();
 
-  const { status } = await req.json();
+  const patient = await Patient.create({ name, phone });
+  const lastAppointment = await Appointment.findOne().sort({ queueNumber: -1 });
+  const nextQueue = lastAppointment ? lastAppointment.queueNumber + 1 : 1;
 
-  const appointment = await Appointment.findByIdAndUpdate(
-    params.id,
-    { status },
-    { new: true }
-  ).populate('patient');
+  const appointment = await Appointment.create({
+    patient: patient._id,
+    queueNumber: nextQueue,
+  });
 
-  if (!appointment) {
-    return NextResponse.json({ error: 'Appointment not found' }, { status: 404 });
-  }
+  return NextResponse.json({ queueNumber: nextQueue }, { status: 201 });
+}
 
-  return NextResponse.json({ success: true, appointment });
+export async function GET() {
+  await dbConnect();
+  const appointments = await Appointment.find()
+    .populate("patient")
+    .sort({ queueNumber: 1 });
+
+  return NextResponse.json(appointments);
 }

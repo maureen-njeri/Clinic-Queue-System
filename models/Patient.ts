@@ -6,4 +6,3 @@ const PatientSchema = new Schema({
 }, { timestamps: true });
 
 export default mongoose.models.Patient || mongoose.model("Patient", PatientSchema);
-
