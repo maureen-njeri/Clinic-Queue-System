@@ -2,69 +2,143 @@
 
 import { useState } from 'react'
 
-interface QueueStatus {
-  currentQueue: number
-  yourQueue: number | null
-  error?: string
-}
-
-export default function QueueStatusPage() {
+export default function CheckStatus() {
+  const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
-  const [status, setStatus] = useState<QueueStatus | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState('')
+  const [error, setError] = useState('')
 
-  const checkStatus = async () => {
-    setLoading(true)
-    const res = await fetch(`/api/queue/${phone}`)
-    const data = await res.json()
-    setStatus(data)
-    setLoading(false)
+  const handleCheck = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setStatus('')
+    setError('')
+
+    try {
+      const res = await fetch(
+        `/api/status?name=${encodeURIComponent(
+          fullName
+        )}&phone=${encodeURIComponent(phone)}`
+      )
+      const data = await res.json()
+
+      if (res.ok) {
+        setStatus(
+          `✅ Your queue number is ${data.data.queueNumber}. Status: ${data.data.status}`
+        )
+      } else {
+        setError(data.error || 'Could not find your record.')
+      }
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
+    }
   }
 
   return (
-    <div className='p-6 max-w-xl mx-auto'>
-      <h1 className='text-2xl font-bold mb-4'>Check Queue Status</h1>
-
-      <input
-        type='tel'
-        placeholder='Enter Phone Number'
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-        className='w-full p-2 border rounded mb-4'
-      />
-
-      <button
-        onClick={checkStatus}
-        disabled={loading}
-        className='bg-green-600 text-white px-4 py-2 rounded'
+    <main
+      style={{
+        maxWidth: 400,
+        margin: '3rem auto',
+        padding: '2rem',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+        borderRadius: 8,
+        fontFamily: 'Arial, sans-serif',
+        backgroundColor: '#fff',
+      }}
+    >
+      <h1
+        style={{
+          textAlign: 'center',
+          marginBottom: '1.5rem',
+          color: '#0070f3',
+        }}
       >
-        {loading ? 'Checking...' : 'Check Status'}
-      </button>
+        Check Your Queue Status
+      </h1>
+      <form
+        onSubmit={handleCheck}
+        style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+      >
+        <label style={{ fontWeight: 700, fontSize: '1.05rem' }}>
+          Full Name
+          <input
+            type='text'
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            required
+            placeholder='Your full name'
+            style={{
+              marginTop: 4,
+              padding: '8px',
+              fontSize: '1rem',
+              borderRadius: 4,
+              border: '1px solid #ccc',
+              width: '100%',
+            }}
+          />
+        </label>
 
-      {status && !status.error && (
-        <div className='mt-4 bg-blue-100 p-4 rounded'>
-          <p>
-            Current Number: <strong>{status.currentQueue}</strong>
-          </p>
-          <p>
-            Your Number: <strong>{status.yourQueue ?? 'N/A'}</strong>
-          </p>
-          <p>
-            People Ahead:{' '}
-            <strong>
-              {status.yourQueue === null
-                ? 'N/A'
-                : Math.max(status.yourQueue - status.currentQueue, 0)}
-            </strong>
-          </p>
-        </div>
-      )}
+        <label style={{ fontWeight: 700, fontSize: '1.05rem' }}>
+          Phone Number
+          <input
+            type='text'
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            maxLength={10}
+            required
+            placeholder='e.g. 0712345678'
+            style={{
+              marginTop: 4,
+              padding: '8px',
+              fontSize: '1rem',
+              borderRadius: 4,
+              border: '1px solid #ccc',
+              width: '100%',
+            }}
+          />
+        </label>
 
-      {status?.error && (
-        <div className='mt-4 bg-red-100 p-4 rounded'>
-          <p>{status.error}</p>
-        </div>
+        <button
+          type='submit'
+          style={{
+            marginTop: '1rem',
+            padding: '10px',
+            backgroundColor: '#0070f3',
+            color: 'white',
+            border: 'none',
+            borderRadius: 5,
+            cursor: 'pointer',
+            fontWeight: 'bold',
+            fontSize: '1.1rem',
+          }}
+        >
+          Check Status
+        </button>
+      </form>
+
+      {status && (
+        <p
+          style={{
+            marginTop: '1.5rem',
+            color: 'green',
+            fontWeight: 'bold',
+            textAlign: 'center',
+          }}
+        >
+          {status}
+        </p>
       )}
-    </div>
+      {error && (
+        <p
+          style={{
+            marginTop: '1.5rem',
+            color: 'red',
+            fontWeight: 'bold',
+            textAlign: 'center',
+          }}
+        >
+          {error}
+        </p>
+      )}
+    </main>
   )
 }
