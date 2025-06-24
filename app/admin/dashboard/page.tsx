@@ -11,6 +11,12 @@ type User = {
   role: string
 }
 
+type Log = {
+  actorEmail: string
+  action: string
+  timestamp: string
+}
+
 export default function AdminDashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -20,6 +26,13 @@ export default function AdminDashboard() {
   const [searchName, setSearchName] = useState('')
   const [searchEmail, setSearchEmail] = useState('')
   const [roleFilter, setRoleFilter] = useState('')
+  const [logs, setLogs] = useState<Log[]>([])
+  const [metrics, setMetrics] = useState({
+    users: 0,
+    appointments: 0,
+    prescriptions: 0,
+    todayAppointments: 0,
+  })
 
   const roles = [
     'admin',
@@ -40,6 +53,7 @@ export default function AdminDashboard() {
     }
   }, [status, session])
 
+  // Fetch users
   const fetchUsers = async () => {
     try {
       const res = await fetch('/api/users')
@@ -54,6 +68,7 @@ export default function AdminDashboard() {
     fetchUsers()
   }, [])
 
+  // Filter users
   useEffect(() => {
     let filtered = [...users]
     if (searchName) {
@@ -95,10 +110,28 @@ export default function AdminDashboard() {
     }
   }
 
+  // Role counts
   const roleCounts = roles.reduce((acc, role) => {
     acc[role] = users.filter((u) => u.role === role).length
     return acc
   }, {} as Record<string, number>)
+
+  // Fetch metrics
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      const res = await fetch('/api/admin/metrics')
+      const data = await res.json()
+      setMetrics(data)
+    }
+    fetchMetrics()
+  }, [])
+
+  // Fetch audit logs
+  useEffect(() => {
+    fetch('/api/admin/audit-logs')
+      .then((res) => res.json())
+      .then((data) => setLogs(data))
+  }, [])
 
   return (
     <div className='min-h-screen bg-accent p-8 font-sans text-gray-800'>
@@ -114,6 +147,26 @@ export default function AdminDashboard() {
           Logout
         </button>
       </header>
+
+      {/* Metrics */}
+      <section className='mb-6 grid grid-cols-2 md:grid-cols-4 gap-4'>
+        <div className='bg-white p-4 rounded-xl shadow'>
+          <h3 className='font-bold'>Users</h3>
+          <p>{metrics.users}</p>
+        </div>
+        <div className='bg-white p-4 rounded-xl shadow'>
+          <h3 className='font-bold'>Appointments</h3>
+          <p>{metrics.appointments}</p>
+        </div>
+        <div className='bg-white p-4 rounded-xl shadow'>
+          <h3 className='font-bold'>Prescriptions</h3>
+          <p>{metrics.prescriptions}</p>
+        </div>
+        <div className='bg-white p-4 rounded-xl shadow'>
+          <h3 className='font-bold'>Today’s Visits</h3>
+          <p>{metrics.todayAppointments}</p>
+        </div>
+      </section>
 
       {/* Filters */}
       <section className='mb-6 space-y-2'>
@@ -197,6 +250,19 @@ export default function AdminDashboard() {
             ))}
           </div>
         )}
+      </section>
+
+      {/* Audit Logs */}
+      <section className='mt-12'>
+        <h2 className='text-xl font-semibold mb-2'>Audit Logs</h2>
+        <ul className='text-sm bg-white rounded-xl p-4 space-y-1 shadow'>
+          {logs.map((log, i) => (
+            <li key={i}>
+              <strong>{log.actorEmail}</strong> - {log.action} on{' '}
+              {new Date(log.timestamp).toLocaleString()}
+            </li>
+          ))}
+        </ul>
       </section>
     </div>
   )
