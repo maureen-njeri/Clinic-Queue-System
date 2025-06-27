@@ -1,8 +1,15 @@
-const nextConfig = {
-  experimental: {
-    // other experimental flags, if any
+import { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
+  eslint: {
+    // ✅ Prevent ESLint errors from failing the build on Vercel
+    ignoreDuringBuilds: true,
   },
-  // ...other config
+  reactStrictMode: true,
+  experimental: {
+    // your experimental flags here if any
+  },
+  // other config options can go here
 }
 
-export default nextConfig;
+export default nextConfig

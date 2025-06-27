@@ -132,10 +132,7 @@ export default function ReceptionistDashboard() {
       const res = await fetch(`/api/appointment/${id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          reason: rescheduleForm.reason,
-          doctorType: rescheduleForm.doctorType,
-        }),
+        body: JSON.stringify(rescheduleForm),
       })
       if (!res.ok) throw new Error()
       toast.success('Appointment updated')
@@ -187,7 +184,12 @@ export default function ReceptionistDashboard() {
             type='text'
             placeholder='Phone (Max 10) *'
             value={form.phone}
-            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                phone: e.target.value.replace(/\D/g, '').slice(0, 10),
+              })
+            }
             className='p-3 border border-primary rounded-xl'
             required
             maxLength={10}
@@ -300,7 +302,6 @@ export default function ReceptionistDashboard() {
               </button>
             </div>
 
-            {/* Reschedule Section */}
             {rescheduleId === a._id && (
               <div className='mt-4 bg-accent p-4 rounded-xl border'>
                 <h4 className='font-semibold mb-2'>Reschedule Appointment</h4>
@@ -390,4 +391,3 @@ export default function ReceptionistDashboard() {
     </div>
   )
 }
-

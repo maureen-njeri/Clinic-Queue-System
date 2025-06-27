@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     const phone = req.nextUrl.searchParams.get('phone')
     const fullName = req.nextUrl.searchParams.get('name')
 
-    let filter: any = {}
+    const filter: any = {}
     if (phone) filter.phone = phone
     if (fullName) filter.fullName = fullName
 

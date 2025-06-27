@@ -1,39 +1,38 @@
+// app/api/appointment/[id]/dispense/route.ts
+
 import { NextRequest, NextResponse } from 'next/server'
-import connectDB from '@/lib/mongodb'
+import dbConnect from '@/lib/mongodb'
 import Appointment from '@/models/Appointment'
-import { getToken } from 'next-auth/jwt'
+import type { RouteContext } from 'next' // ✅ Import RouteContext
 
-export async function PUT(req: Request, context: { params: { id: string } }) {
+export async function PUT(
+  request: NextRequest,
+  context: RouteContext<{ id: string }> // ✅ Properly typed context param
+) {
+  await dbConnect()
+
   const { id } = context.params
-  const body = await req.json()
-  const { dispensed, pharmacistNote } = body
-
-  await connectDB()
-  const token = await getToken({ req })
-
-  const pharmacistName = token?.name || 'Unknown'
 
   try {
-    const updated = await Appointment.findByIdAndUpdate(
-      id,
-      {
-        dispensed,
-        pharmacistNote,
-        dispensedBy: pharmacistName,
-        dispensedAt: new Date(),
-      },
-      { new: true }
-    )
+    const body = await request.json()
 
-    if (!updated) {
+    const updatedAppointment = await Appointment.findByIdAndUpdate(id, body, {
+      new: true,
+    })
+
+    if (!updatedAppointment) {
       return NextResponse.json(
-        { error: 'Appointment not found' },
+        { message: 'Appointment not found' },
         { status: 404 }
       )
     }
 
-    return NextResponse.json(updated, { status: 200 })
+    return NextResponse.json(updatedAppointment, { status: 200 })
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to update' }, { status: 500 })
+    console.error('Error updating appointment:', error)
+    return NextResponse.json(
+      { message: 'Internal Server Error' },
+      { status: 500 }
+    )
   }
 }
