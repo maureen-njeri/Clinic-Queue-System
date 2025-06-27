@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import type { RouteContext } from 'next' // ✅ Important for Vercel
 import dbConnect from '@/lib/mongodb'
 import Appointment from '@/models/Appointment'
 import Pusher from 'pusher'
@@ -11,11 +12,8 @@ const pusher = new Pusher({
   useTLS: true,
 })
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params
+export async function POST(req: NextRequest, context: RouteContext) {
+  const { id } = context.params as { id: string }
 
   try {
     await dbConnect()
@@ -44,7 +42,7 @@ export async function POST(
       message: 'Appointment deleted and queue updated',
     })
   } catch (error) {
-    console.error('DELETE error:', error)
+    console.error('POST delete error:', error)
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 }
