@@ -4,11 +4,12 @@ import dbConnect from '@/lib/mongodb'
 import Appointment from '@/models/Appointment'
 import { pusherServer } from '@/lib/pusher-server'
 
+// PATCH - Update appointment status
 export async function PATCH(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = context.params
+  const { id } = params
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return NextResponse.json(
@@ -19,6 +20,7 @@ export async function PATCH(
 
   try {
     const { status } = await request.json()
+
     if (!['waiting', 'in-progress', 'done'].includes(status)) {
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
     }
@@ -38,7 +40,6 @@ export async function PATCH(
       )
     }
 
-    // 🔔 Trigger real-time update
     await pusherServer.trigger('bookings', 'status-updated', {
       appointmentId: updated._id,
       status: updated.status,
@@ -54,11 +55,12 @@ export async function PATCH(
   }
 }
 
+// DELETE - Delete appointment
 export async function DELETE(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = context.params
+  const { id } = params
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return NextResponse.json(
@@ -69,8 +71,8 @@ export async function DELETE(
 
   try {
     await dbConnect()
-    const deleted = await Appointment.findByIdAndDelete(id)
 
+    const deleted = await Appointment.findByIdAndDelete(id)
     if (!deleted) {
       return NextResponse.json(
         { error: 'Appointment not found' },
@@ -78,7 +80,6 @@ export async function DELETE(
       )
     }
 
-    // 🔔 Trigger real-time delete update
     await pusherServer.trigger('bookings', 'appointment-deleted', {
       appointmentId: id,
     })
