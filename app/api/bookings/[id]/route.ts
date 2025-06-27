@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import mongoose from 'mongoose'
 import dbConnect from '@/lib/mongodb'
 import Appointment from '@/models/Appointment'
@@ -6,7 +6,7 @@ import { pusherServer } from '@/lib/pusher-server'
 
 // PATCH - Update appointment status
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const { id } = params
@@ -57,7 +57,7 @@ export async function PATCH(
 
 // DELETE - Delete appointment
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   const { id } = params

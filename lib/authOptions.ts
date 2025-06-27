@@ -1,3 +1,4 @@
+// lib/authOptions.ts
 import CredentialsProvider from 'next-auth/providers/credentials'
 import dbConnect from '@/lib/mongodb'
 import Patient from '@/models/Patient'
@@ -5,9 +6,7 @@ import User from '@/models/User'
 import bcrypt from 'bcrypt'
 
 export const authOptions = {
-  session: {
-    strategy: 'jwt',
-  },
+  session: { strategy: 'jwt' },
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -18,25 +17,22 @@ export const authOptions = {
       },
       async authorize(credentials) {
         await dbConnect()
-
         const { email, password, role } = credentials ?? {}
-        if (!email || !password || !role) {
-          throw new Error('Missing credentials')
-        }
+        if (!email || !password || !role) throw new Error('Missing credentials')
 
-        let account = null
+        let account
 
-        if (role.toLowerCase() === 'patient') {
+        if (role === 'patient') {
           account = await Patient.findOne({ email }).lean()
-          if (!account) throw new Error('No patient found')
-          const isValid = await bcrypt.compare(password, account.password)
-          if (!isValid) throw new Error('Wrong password')
+          if (!account || !(await bcrypt.compare(password, account.password))) {
+            throw new Error('Invalid login')
+          }
           account.role = 'patient'
         } else {
           const user = await User.findOne({ email })
-          if (!user) throw new Error('No user found')
-          const isValid = await bcrypt.compare(password, user.password)
-          if (!isValid) throw new Error('Wrong password')
+          if (!user || !(await bcrypt.compare(password, user.password))) {
+            throw new Error('Invalid login')
+          }
           account = {
             _id: user._id,
             fullName: user.fullName,
@@ -45,9 +41,7 @@ export const authOptions = {
           }
         }
 
-        if (account.role.toLowerCase() !== role.toLowerCase()) {
-          throw new Error('Incorrect role selected')
-        }
+        if (account.role !== role) throw new Error('Role mismatch')
 
         return {
           id: account._id.toString(),
@@ -69,7 +63,7 @@ export const authOptions = {
       return token
     },
     async session({ session, token }) {
-      if (token && session.user) {
+      if (session?.user && token) {
         session.user.id = token.id
         session.user.name = token.name
         session.user.email = token.email
