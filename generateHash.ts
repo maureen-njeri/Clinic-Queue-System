@@ -1,5 +1,5 @@
 // generateHash.ts
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 
 // Assuming you have these functions in a file, adjust the path as needed
 // For simplicity, let's put them directly here for this script
