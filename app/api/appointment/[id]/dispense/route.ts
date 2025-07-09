@@ -1,17 +1,17 @@
 // app/api/appointment/[id]/dispense/route.ts
+export const dynamic = 'force-dynamic'
 
 import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import Appointment from '@/models/Appointment'
-import type { RouteContext } from 'next' // ✅ Import RouteContext
 
 export async function PUT(
   request: NextRequest,
-  context: RouteContext<{ id: string }> // ✅ Properly typed context param
+  { params }: { params: { id: string } } // ✅ Correct typing
 ) {
   await dbConnect()
 
-  const { id } = context.params
+  const { id } = params
 
   try {
     const body = await request.json()

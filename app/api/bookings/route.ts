@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { NextResponse, NextRequest } from 'next/server'
 import { z } from 'zod'
 import dbConnect from '@/lib/mongodb'

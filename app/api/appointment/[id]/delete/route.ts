@@ -1,5 +1,6 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
-import type { RouteContext } from 'next' // ✅ Important for Vercel
 import dbConnect from '@/lib/mongodb'
 import Appointment from '@/models/Appointment'
 import Pusher from 'pusher'
@@ -12,8 +13,11 @@ const pusher = new Pusher({
   useTLS: true,
 })
 
-export async function POST(req: NextRequest, context: RouteContext) {
-  const { id } = context.params as { id: string }
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params
 
   try {
     await dbConnect()
@@ -31,6 +35,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
     const waiting = await Appointment.find({ status: 'waiting' }).sort({
       createdAt: 1,
     })
+
     for (let i = 0; i < waiting.length; i++) {
       waiting[i].queueNumber = i + 1
       await waiting[i].save()

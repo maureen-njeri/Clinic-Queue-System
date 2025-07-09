@@ -1,4 +1,5 @@
 // File: app/api/status/route.ts
+export const dynamic = 'force-dynamic'
 
 import { NextResponse, NextRequest } from 'next/server'
 import dbConnect from '@/lib/mongodb'

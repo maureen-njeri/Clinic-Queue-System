@@ -1,7 +1,14 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import Appointment from '@/models/Appointment'
 import Patient from '@/models/Patient'
+
+// ✅ Optional: Define a lean interface for queueNumber
+interface AppointmentLean {
+  queueNumber?: number
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,7 +22,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Save patient
+    // ✅ Save patient
     const patient = await Patient.create({
       fullName,
       phone,
@@ -24,17 +31,19 @@ export async function POST(req: NextRequest) {
       doctorType,
     })
 
-    // Queue number
-    const last = await Appointment.findOne().sort({ queueNumber: -1 }).lean()
-    const nextQueue = last ? last.queueNumber + 1 : 1
+    // ✅ Fix TypeScript error with typed lean()
+    const last = await Appointment.findOne()
+      .sort({ queueNumber: -1 })
+      .lean<AppointmentLean>()
+    const nextQueue = last?.queueNumber ? last.queueNumber + 1 : 1
 
-    // Create appointment
+    // ✅ Create appointment
     await Appointment.create({
       patient: patient._id,
       queueNumber: nextQueue,
     })
 
-    // Optional email
+    // ✅ Optional email notification
     if (email) {
       try {
         await fetch(`${process.env.NEXTAUTH_URL}/api/appointment/notifyEmail`, {
@@ -51,7 +60,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Optional SMS
+    // ✅ Optional SMS notification
     if (phone) {
       try {
         await fetch(`${process.env.NEXTAUTH_URL}/api/appointment/notifySms`, {

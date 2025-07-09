@@ -27,7 +27,7 @@ export default function ReceptionistPanel() {
     (a) =>
       a.patient?.fullName?.toLowerCase().includes(searchName.toLowerCase()) &&
       a.patient?.phone?.includes(searchPhone) &&
-      a.patient?.doctor?.toLowerCase().includes(searchDoctor.toLowerCase())
+      a.patient?.doctorType?.toLowerCase().includes(searchDoctor.toLowerCase())
   )
 
   return (
@@ -66,7 +66,7 @@ export default function ReceptionistPanel() {
               <strong>Reason:</strong> {appt.patient?.reason}
             </div>
             <div>
-              <strong>Doctor:</strong> {appt.patient?.doctor}
+              <strong>Doctor:</strong> {appt.patient?.doctorType}
             </div>
             <div>
               <strong>Status:</strong> {appt.status}

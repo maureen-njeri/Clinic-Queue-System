@@ -1,12 +1,17 @@
 // app/api/test-mongo/route.ts
 import { NextResponse } from 'next/server'
-import clientPromise from '@/lib/mongodb' // or '@/lib/mongoose' if that's the filename
+import dbConnect from '@/lib/mongodb'
+import mongoose from 'mongoose'
 
 export async function GET() {
   try {
-    const client = await clientPromise
-    const db = client.db() // This uses the DB from your URI
-    const collections = await db.listCollections().toArray()
+    await dbConnect()
+
+    if (!mongoose.connection.db) {
+      throw new Error('Database connection not established.')
+    }
+
+    const collections = await mongoose.connection.db.listCollections().toArray()
 
     return NextResponse.json({ collections })
   } catch (error: any) {

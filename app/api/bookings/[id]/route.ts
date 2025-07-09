@@ -1,64 +1,15 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import mongoose from 'mongoose'
 import dbConnect from '@/lib/mongodb'
 import Appointment from '@/models/Appointment'
 import { pusherServer } from '@/lib/pusher-server'
 
-// PATCH - Update appointment status
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return NextResponse.json(
-      { error: 'Invalid appointment ID' },
-      { status: 400 }
-    )
-  }
-
-  try {
-    const { status } = await request.json()
-
-    if (!['waiting', 'in-progress', 'done'].includes(status)) {
-      return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
-    }
-
-    await dbConnect()
-
-    const updated = await Appointment.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    ).populate('patient')
-
-    if (!updated) {
-      return NextResponse.json(
-        { error: 'Appointment not found' },
-        { status: 404 }
-      )
-    }
-
-    await pusherServer.trigger('bookings', 'status-updated', {
-      appointmentId: updated._id,
-      status: updated.status,
-    })
-
-    return NextResponse.json({ message: 'Status updated', data: updated })
-  } catch (error) {
-    console.error('PATCH error:', error)
-    return NextResponse.json(
-      { error: 'Failed to update status' },
-      { status: 500 }
-    )
-  }
-}
-
-// DELETE - Delete appointment
+// ✅ Use correct inline typing for params context
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Record<string, string> }
 ) {
   const { id } = params
 

@@ -1,8 +1,9 @@
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import Appointment from '@/models/Appointment'
 import Pusher from 'pusher'
-import type { RouteContext } from 'next' // ✅ Import RouteContext
 
 // Pusher Setup
 const pusher = new Pusher({
@@ -16,9 +17,9 @@ const pusher = new Pusher({
 // PATCH = Update appointment (status, diagnosis, doctorNote, etc.)
 export async function PATCH(
   req: NextRequest,
-  context: RouteContext // ✅ Correct typing
+  { params }: { params: { id: string } }
 ) {
-  const { id } = context.params as { id: string }
+  const { id } = params
 
   try {
     await dbConnect()
@@ -36,11 +37,15 @@ export async function PATCH(
     if ('diagnosis' in data) updateFields.diagnosis = data.diagnosis
     if ('doctorNote' in data) updateFields.doctorNote = data.doctorNote
     if ('reason' in data) updateFields['patient.reason'] = data.reason
-    if ('doctorType' in data) updateFields['patient.doctorType'] = data.doctorType
+    if ('doctorType' in data)
+      updateFields['patient.doctorType'] = data.doctorType
 
     const current = await Appointment.findById(id).populate('patient')
     if (!current) {
-      return NextResponse.json({ error: 'Appointment not found' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Appointment not found' },
+        { status: 404 }
+      )
     }
 
     updateFields.queueNumber =
@@ -52,7 +57,9 @@ export async function PATCH(
     }).populate('patient')
 
     if (updateFields.status && updateFields.status !== 'waiting') {
-      const waiting = await Appointment.find({ status: 'waiting' }).sort({ createdAt: 1 })
+      const waiting = await Appointment.find({ status: 'waiting' }).sort({
+        createdAt: 1,
+      })
       for (let i = 0; i < waiting.length; i++) {
         waiting[i].queueNumber = i + 1
         await waiting[i].save()
@@ -70,28 +77,36 @@ export async function PATCH(
     })
   } catch (error) {
     console.error('PATCH error:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    )
   }
 }
 
 // DELETE = Cancel Appointment
 export async function DELETE(
   req: NextRequest,
-  context: RouteContext // ✅ Correct typing
+  { params }: { params: { id: string } }
 ) {
-  const { id } = context.params as { id: string }
+  const { id } = params
 
   try {
     await dbConnect()
 
     const appointment = await Appointment.findById(id)
     if (!appointment) {
-      return NextResponse.json({ error: 'Appointment not found' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Appointment not found' },
+        { status: 404 }
+      )
     }
 
     await appointment.deleteOne()
 
-    const waiting = await Appointment.find({ status: 'waiting' }).sort({ createdAt: 1 })
+    const waiting = await Appointment.find({ status: 'waiting' }).sort({
+      createdAt: 1,
+    })
     for (let i = 0; i < waiting.length; i++) {
       waiting[i].queueNumber = i + 1
       await waiting[i].save()
@@ -104,6 +119,9 @@ export async function DELETE(
     })
   } catch (error) {
     console.error('DELETE error:', error)
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    )
   }
 }

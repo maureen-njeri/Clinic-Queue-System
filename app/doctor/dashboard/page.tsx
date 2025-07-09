@@ -34,7 +34,7 @@ export default function DoctorDashboard() {
       router.push('/login')
     } else if (
       status === 'authenticated' &&
-      session?.user?.role.toLowerCase() !== 'doctor'
+      (!session?.user?.role || session.user.role.toLowerCase() !== 'doctor')
     ) {
       router.push('/login')
     }

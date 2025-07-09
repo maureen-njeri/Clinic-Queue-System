@@ -1,11 +1,21 @@
 // lib/authOptions.ts
+import type { AuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import dbConnect from '@/lib/mongodb'
+import bcrypt from 'bcrypt'
 import Patient from '@/models/Patient'
 import User from '@/models/User'
-import bcrypt from 'bcrypt'
 
-export const authOptions = {
+// Define the shape of user returned from MongoDB .lean()
+type LeanUser = {
+  _id: string
+  fullName?: string
+  email: string
+  password: string
+  role?: string
+}
+
+export const authOptions: AuthOptions = {
   session: { strategy: 'jwt' },
   providers: [
     CredentialsProvider({
@@ -18,57 +28,37 @@ export const authOptions = {
       async authorize(credentials) {
         await dbConnect()
         const { email, password, role } = credentials ?? {}
-        if (!email || !password || !role) throw new Error('Missing credentials')
+        if (!email || !password || !role) throw new Error('Missing fields')
 
-        let account
+        let user: LeanUser | null = null
 
         if (role === 'patient') {
-          account = await Patient.findOne({ email }).lean()
-          if (!account || !(await bcrypt.compare(password, account.password))) {
-            throw new Error('Invalid login')
-          }
-          account.role = 'patient'
+          user = await Patient.findOne({ email }).lean<LeanUser>()
+          if (!user) throw new Error('No patient found')
         } else {
-          const user = await User.findOne({ email })
-          if (!user || !(await bcrypt.compare(password, user.password))) {
-            throw new Error('Invalid login')
-          }
-          account = {
-            _id: user._id,
-            fullName: user.fullName,
-            email: user.email,
-            role: user.role,
-          }
+          user = await User.findOne({ email }).lean<LeanUser>()
+          if (!user) throw new Error('No user found')
         }
 
-        if (account.role !== role) throw new Error('Role mismatch')
+        const valid = await bcrypt.compare(password, user.password)
+        if (!valid) throw new Error('Wrong password')
 
         return {
-          id: account._id.toString(),
-          name: account.fullName,
-          email: account.email,
-          role: account.role,
+          id: user._id.toString(),
+          name: user.fullName || 'User',
+          email: user.email,
+          role: user.role || role,
         }
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-        token.name = user.name
-        token.email = user.email
-        token.role = user.role
-      }
+      if (user) Object.assign(token, user)
       return token
     },
     async session({ session, token }) {
-      if (session?.user && token) {
-        session.user.id = token.id
-        session.user.name = token.name
-        session.user.email = token.email
-        session.user.role = token.role
-      }
+      if (session?.user) Object.assign(session.user, token)
       return session
     },
   },
