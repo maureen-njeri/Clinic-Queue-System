@@ -54,21 +54,21 @@ export default function LoginPage() {
   }
 
   return (
-    <div className='w-screen h-screen flex flex-row items-center justify-center bg-black text-white overflow-hidden'>
-      {/* Left - Logo */}
-      <div className='w-1/2 min-w-[180px] max-w-sm flex flex-col items-center justify-center p-4'>
+    <div className='w-screen h-screen flex flex-row overflow-x-auto bg-black text-white'>
+      {/* Left - Logo & Slogan */}
+      <div className='min-w-[300px] w-1/2 max-w-md flex flex-col justify-center items-center p-6 bg-black'>
         <img
           src='/first-response-logo.png'
-          alt='Logo'
-          className='w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-full mb-4 object-contain'
+          alt='First Response Logo'
+          className='w-36 h-36 sm:w-40 sm:h-40 mb-4 object-contain'
         />
-        <p className='text-sm text-gray-300 text-center'>
+        <p className='text-center text-sm sm:text-base text-gray-300'>
           QUALITY • COMPASSION • INTEGRITY
         </p>
       </div>
 
-      {/* RIGHT - FORM SECTION */}
-      <div className='w-1/2 min-w-[240px] flex justify-center items-center p-4'>
+      {/* Right - Login Form */}
+      <div className='min-w-[350px] w-1/2 flex justify-center items-center p-6 bg-black'>
         <div className='w-full max-w-md bg-white text-black rounded-2xl shadow-xl p-8'>
           <h2 className='text-2xl font-bold text-center mb-6 text-[#004990]'>
             Sign In
