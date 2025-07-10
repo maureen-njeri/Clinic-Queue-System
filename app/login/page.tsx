@@ -60,8 +60,9 @@ export default function LoginPage() {
         <img
           src='/first-response-logo.png'
           alt='First Response Logo'
-          className='w-36 h-36 sm:w-40 sm:h-40 mb-4 object-contain'
+          className='hidden sm:block w-36 h-36 sm:w-40 sm:h-40 mb-4 object-contain'
         />
+
         <p className='text-center text-sm sm:text-base text-gray-300'>
           QUALITY • COMPASSION • INTEGRITY
         </p>
