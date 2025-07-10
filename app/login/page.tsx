@@ -54,21 +54,21 @@ export default function LoginPage() {
   }
 
   return (
-    <div className='min-h-screen w-full flex flex-row bg-black text-white overflow-x-auto'>
-      {/* LEFT - LOGO SECTION */}
-      <div className='w-1/2 flex flex-col items-center justify-center px-4 py-10'>
+    <div className='w-screen h-screen flex flex-row items-center justify-center bg-black text-white overflow-hidden'>
+      {/* Left - Logo */}
+      <div className='w-1/2 min-w-[180px] max-w-sm flex flex-col items-center justify-center p-4'>
         <img
           src='/first-response-logo.png'
           alt='Logo'
-          className='w-48 h-48 rounded-full shadow-lg mb-4'
+          className='w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-full mb-4 object-contain'
         />
-        <p className='text-sm text-gray-300 mt-2'>
+        <p className='text-sm text-gray-300 text-center'>
           QUALITY • COMPASSION • INTEGRITY
         </p>
       </div>
 
       {/* RIGHT - FORM SECTION */}
-      <div className='w-1/2 flex items-center justify-center px-6 py-12'>
+      <div className='w-1/2 min-w-[240px] flex justify-center items-center p-4'>
         <div className='w-full max-w-md bg-white text-black rounded-2xl shadow-xl p-8'>
           <h2 className='text-2xl font-bold text-center mb-6 text-[#004990]'>
             Sign In
