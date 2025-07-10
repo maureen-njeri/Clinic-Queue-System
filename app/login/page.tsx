@@ -54,21 +54,21 @@ export default function LoginPage() {
   }
 
   return (
-    <div className='w-screen h-screen flex flex-col sm:flex-row items-center justify-center bg-black text-white'>
-      {/* Logo & Slogan - only shown on sm and above */}
-      <div className='hidden sm:flex w-1/2 max-w-md flex-col justify-center items-center p-6 bg-black'>
+    <div className='w-screen h-screen flex flex-col md:flex-row items-center justify-center bg-black text-white'>
+      {/* Logo & Slogan - only shown on md and above */}
+      <div className='hidden md:flex w-1/2 max-w-md flex-col justify-center items-center p-6 bg-black'>
         <img
           src='/first-response-logo.png'
           alt='First Response Logo'
-          className='w-36 h-36 sm:w-40 sm:h-40 mb-4 object-contain'
+          className='w-36 h-36 md:w-40 md:h-40 mb-4 object-contain'
         />
-        <p className='text-center text-sm sm:text-base text-gray-300'>
+        <p className='text-center text-sm md:text-base text-gray-300'>
           QUALITY • COMPASSION • INTEGRITY
         </p>
       </div>
 
       {/* Login Form - visible on all screen sizes */}
-      <div className='w-full sm:w-1/2 flex justify-center items-center p-6'>
+      <div className='w-full md:w-1/2 flex justify-center items-center p-6'>
         <div className='w-full max-w-md bg-white text-black rounded-2xl shadow-xl p-8'>
           <h2 className='text-2xl font-bold text-center mb-6 text-[#004990]'>
             Sign In
