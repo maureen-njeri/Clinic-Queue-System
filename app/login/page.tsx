@@ -54,22 +54,21 @@ export default function LoginPage() {
   }
 
   return (
-    <div className='w-screen h-screen flex flex-row overflow-x-auto bg-black text-white'>
-      {/* Left - Logo & Slogan */}
-      <div className='min-w-[300px] w-1/2 max-w-md flex flex-col justify-center items-center p-6 bg-black'>
+    <div className='w-screen h-screen flex flex-col sm:flex-row items-center justify-center bg-black text-white'>
+      {/* Logo & Slogan - only shown on sm and above */}
+      <div className='hidden sm:flex w-1/2 max-w-md flex-col justify-center items-center p-6 bg-black'>
         <img
           src='/first-response-logo.png'
           alt='First Response Logo'
-          className='hidden sm:block w-36 h-36 sm:w-40 sm:h-40 mb-4 object-contain'
+          className='w-36 h-36 sm:w-40 sm:h-40 mb-4 object-contain'
         />
-
-        <p className='hidden sm:block text-center text-sm sm:text-base text-gray-300'>
+        <p className='text-center text-sm sm:text-base text-gray-300'>
           QUALITY • COMPASSION • INTEGRITY
         </p>
       </div>
 
-      {/* Right - Login Form */}
-      <div className='min-w-[350px] w-1/2 flex justify-center items-center p-6 bg-black'>
+      {/* Login Form - visible on all screen sizes */}
+      <div className='w-full sm:w-1/2 flex justify-center items-center p-6'>
         <div className='w-full max-w-md bg-white text-black rounded-2xl shadow-xl p-8'>
           <h2 className='text-2xl font-bold text-center mb-6 text-[#004990]'>
             Sign In
@@ -80,7 +79,6 @@ export default function LoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className='space-y-5'>
-            {/* Role */}
             <div>
               <label className='text-sm font-semibold block mb-1'>Role</label>
               <select
@@ -97,7 +95,6 @@ export default function LoginPage() {
               </select>
             </div>
 
-            {/* Email */}
             <div>
               <label className='text-sm font-semibold block mb-1'>Email</label>
               <input
@@ -109,7 +106,6 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Password */}
             <div>
               <label className='text-sm font-semibold block mb-1'>
                 Password
@@ -132,7 +128,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Remember Me */}
             <div className='flex items-center justify-between text-sm'>
               <label className='flex items-center'>
                 <input
