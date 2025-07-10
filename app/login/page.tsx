@@ -64,27 +64,24 @@ export default function LoginPage() {
 
   return (
     <div className='min-h-screen flex flex-col lg:flex-row font-sans'>
-      {/* Left: Logo + Clinic Info */}
-      <div className='w-full lg:w-1/2 bg-[#004990] text-white flex flex-col justify-center items-center px-6 py-12 lg:px-10'>
+      {/* Left: Logo + Slogan */}
+      <div className='lg:w-1/2 bg-[#004990] text-white flex flex-col justify-center items-center px-10 py-8'>
         <div className='text-center'>
           <img
             src='/first-response-logo.png'
             alt='Clinic Logo'
-            className='w-40 h-40 object-contain mb-6 mx-auto'
+            className='w-40 h-40 object-contain mb-3'
           />
-          <h1 className='text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight mb-4'>
-            FIRST RESPONSE CLINIC
-          </h1>
-          <p className='tracking-wide text-base sm:text-lg font-medium'>
+          <p className='text-sm sm:text-base font-medium tracking-wider'>
             QUALITY • COMPASSION • INTEGRITY
           </p>
         </div>
       </div>
 
       {/* Right: Login Form */}
-      <div className='w-full lg:w-1/2 bg-[#004990] flex items-center justify-center px-4 sm:px-8 py-10'>
-        <div className='bg-white rounded-2xl shadow-2xl w-full max-w-xl p-8 sm:p-10'>
-          <h2 className='text-3xl sm:text-4xl font-extrabold text-center mb-8 text-[#004990]'>
+      <div className='lg:w-1/2 bg-[#004990] flex items-center justify-center p-6 sm:p-12'>
+        <div className='bg-white rounded-2xl shadow-2xl w-full max-w-xl p-10 sm:p-12'>
+          <h2 className='text-4xl font-extrabold text-center mb-8 text-[#004990]'>
             Sign In
           </h2>
 
@@ -94,13 +91,11 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className='space-y-6'>
             <div>
-              <label className='block text-base sm:text-lg font-semibold mb-2'>
-                Role
-              </label>
+              <label className='block text-lg font-semibold mb-2'>Role</label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className='w-full px-6 py-3 text-base sm:text-lg border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400'
+                className='w-full px-6 py-4 text-lg border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400'
               >
                 <option value='Admin'>Admin</option>
                 <option value='Doctor'>Doctor</option>
@@ -112,20 +107,18 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className='block text-base sm:text-lg font-semibold mb-2'>
-                Email
-              </label>
+              <label className='block text-lg font-semibold mb-2'>Email</label>
               <input
                 type='email'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className='w-full px-6 py-3 text-base sm:text-lg border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400'
+                className='w-full px-6 py-4 text-lg border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400'
               />
             </div>
 
             <div>
-              <label className='block text-base sm:text-lg font-semibold mb-2'>
+              <label className='block text-lg font-semibold mb-2'>
                 Password
               </label>
               <div className='relative'>
@@ -134,7 +127,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className='w-full px-6 py-3 text-base sm:text-lg border border-gray-300 rounded-full pr-12 focus:outline-none focus:ring-2 focus:ring-blue-400'
+                  className='w-full px-6 py-4 text-lg border border-gray-300 rounded-full pr-12 focus:outline-none focus:ring-2 focus:ring-blue-400'
                 />
                 <button
                   type='button'
@@ -163,10 +156,20 @@ export default function LoginPage() {
 
             <button
               type='submit'
-              className='w-full py-3 sm:py-4 bg-[#004990] text-white text-base sm:text-lg font-bold rounded-full hover:bg-blue-800 transition'
+              className='w-full py-4 bg-[#004990] text-white text-lg font-bold rounded-full hover:bg-blue-800 transition'
             >
               Sign In
             </button>
+
+            <p className='text-center text-sm mt-4'>
+              Don't have an account?{' '}
+              <a
+                href='/signup'
+                className='text-blue-600 font-semibold hover:underline'
+              >
+                Sign up
+              </a>
+            </p>
           </form>
         </div>
       </div>
