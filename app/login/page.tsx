@@ -48,30 +48,29 @@ export default function LoginPage() {
     } else if (res?.ok) {
       const sessionRes = await fetch('/api/auth/session')
       const sessionData = await sessionRes.json()
-
       const userRole = sessionData?.user?.role?.toLowerCase()
       router.push(roleRoutes[userRole] || '/admin/dashboard')
     }
   }
 
   return (
-    <div className='min-h-screen w-full flex flex-row bg-[#004990] text-white'>
-      {/* Left – Logo + Slogan */}
-      <div className='w-1/2 flex flex-col justify-center items-center p-6'>
+    <div className='min-h-screen flex flex-col md:flex-row bg-gray-900 text-white'>
+      {/* Left: Logo + Slogan */}
+      <div className='md:w-1/2 flex flex-col justify-center items-center p-6'>
         <img
           src='/first-response-logo.png'
           alt='Clinic Logo'
-          className='w-40 h-40 object-contain mb-4'
+          className='w-32 h-32 mb-4 rounded-full shadow-lg'
         />
-        <p className='text-sm sm:text-base font-medium tracking-wider'>
+        <p className='text-sm tracking-wide text-gray-300'>
           QUALITY • COMPASSION • INTEGRITY
         </p>
       </div>
 
-      {/* Right – Login Form */}
-      <div className='w-1/2 flex items-center justify-center p-6'>
-        <div className='bg-white text-black rounded-2xl shadow-2xl w-full max-w-md p-8'>
-          <h2 className='text-3xl font-bold text-center mb-6 text-[#004990]'>
+      {/* Right: Login Form */}
+      <div className='md:w-1/2 flex items-center justify-center p-6'>
+        <div className='bg-white text-gray-900 rounded-2xl shadow-lg w-full max-w-xl p-8 sm:p-10'>
+          <h2 className='text-3xl font-bold text-center mb-6 text-blue-700'>
             Sign In
           </h2>
 
@@ -79,13 +78,13 @@ export default function LoginPage() {
             <p className='mb-4 text-center text-red-600 font-medium'>{error}</p>
           )}
 
-          <form onSubmit={handleSubmit} className='space-y-5'>
+          <form onSubmit={handleSubmit} className='space-y-6'>
             <div>
-              <label className='block text-sm font-semibold mb-1'>Role</label>
+              <label className='block text-sm font-semibold mb-2'>Role</label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className='w-full px-4 py-3 border border-gray-300 rounded-lg text-sm'
+                className='w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400'
               >
                 <option value='Admin'>Admin</option>
                 <option value='Doctor'>Doctor</option>
@@ -97,18 +96,18 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className='block text-sm font-semibold mb-1'>Email</label>
+              <label className='block text-sm font-semibold mb-2'>Email</label>
               <input
                 type='email'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className='w-full px-4 py-3 border border-gray-300 rounded-lg text-sm'
+                className='w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400'
               />
             </div>
 
             <div>
-              <label className='block text-sm font-semibold mb-1'>
+              <label className='block text-sm font-semibold mb-2'>
                 Password
               </label>
               <div className='relative'>
@@ -117,24 +116,25 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className='w-full px-4 py-3 border border-gray-300 rounded-lg text-sm pr-10'
+                  className='w-full px-4 py-3 border border-gray-300 rounded-full pr-12 focus:outline-none focus:ring-2 focus:ring-blue-400'
                 />
                 <button
                   type='button'
                   onClick={() => setShowPassword(!showPassword)}
-                  className='absolute inset-y-0 right-3 flex items-center text-gray-500'
+                  className='absolute inset-y-0 right-4 flex items-center justify-center text-gray-500'
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
 
-            <div className='flex justify-between text-sm'>
-              <label className='flex items-center gap-2'>
+            <div className='flex items-center justify-between text-sm'>
+              <label className='flex items-center'>
                 <input
                   type='checkbox'
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
+                  className='mr-2'
                 />
                 Remember me
               </label>
@@ -145,22 +145,21 @@ export default function LoginPage() {
 
             <button
               type='submit'
-              className='w-full py-3 bg-[#004990] text-white font-semibold rounded-lg hover:bg-blue-800 transition'
+              className='w-full py-3 bg-[#004990] text-white text-lg font-semibold rounded-full hover:bg-blue-800 transition'
             >
               Sign In
             </button>
-          </form>
 
-          {/* Sign up link */}
-          <p className='text-center text-sm mt-6 text-gray-700'>
-            Don&apos;t have an account?{' '}
-            <a
-              href='/signup'
-              className='text-blue-600 font-semibold hover:underline'
-            >
-              Sign up
-            </a>
-          </p>
+            <p className='text-center text-sm text-gray-600 mt-4'>
+              Don’t have an account?{' '}
+              <a
+                href='/register'
+                className='text-blue-600 hover:underline font-semibold'
+              >
+                Sign Up
+              </a>
+            </p>
+          </form>
         </div>
       </div>
     </div>
