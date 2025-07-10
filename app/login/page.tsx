@@ -54,49 +54,51 @@ export default function LoginPage() {
   }
 
   return (
-    <div className='min-h-screen flex flex-col md:flex-row bg-gray-900 text-white'>
-      {/* Left: Logo + Slogan */}
-      <div className='md:w-1/2 flex flex-col justify-center items-center p-6'>
+    <div className='min-h-screen w-full flex flex-row bg-black text-white overflow-x-auto'>
+      {/* LEFT - LOGO SECTION */}
+      <div className='w-1/2 flex flex-col items-center justify-center px-4 py-10'>
         <img
           src='/first-response-logo.png'
-          alt='Clinic Logo'
-          className='w-32 h-32 mb-4 rounded-full shadow-lg'
+          alt='Logo'
+          className='w-48 h-48 rounded-full shadow-lg mb-4'
         />
-        <p className='text-sm tracking-wide text-gray-300'>
+        <p className='text-sm text-gray-300 mt-2'>
           QUALITY • COMPASSION • INTEGRITY
         </p>
       </div>
 
-      {/* Right: Login Form */}
-      <div className='md:w-1/2 flex items-center justify-center p-6'>
-        <div className='bg-white text-gray-900 rounded-2xl shadow-lg w-full max-w-xl p-8 sm:p-10'>
-          <h2 className='text-3xl font-bold text-center mb-6 text-blue-700'>
+      {/* RIGHT - FORM SECTION */}
+      <div className='w-1/2 flex items-center justify-center px-6 py-12'>
+        <div className='w-full max-w-md bg-white text-black rounded-2xl shadow-xl p-8'>
+          <h2 className='text-2xl font-bold text-center mb-6 text-[#004990]'>
             Sign In
           </h2>
 
           {error && (
-            <p className='mb-4 text-center text-red-600 font-medium'>{error}</p>
+            <p className='text-red-600 text-center font-medium mb-4'>{error}</p>
           )}
 
-          <form onSubmit={handleSubmit} className='space-y-6'>
+          <form onSubmit={handleSubmit} className='space-y-5'>
+            {/* Role */}
             <div>
-              <label className='block text-sm font-semibold mb-2'>Role</label>
+              <label className='text-sm font-semibold block mb-1'>Role</label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 className='w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400'
               >
-                <option value='Admin'>Admin</option>
-                <option value='Doctor'>Doctor</option>
-                <option value='Nurse'>Nurse</option>
-                <option value='Pharmacist'>Pharmacist</option>
-                <option value='Receptionist'>Receptionist</option>
-                <option value='Lab Technician'>Lab Technician</option>
+                <option>Admin</option>
+                <option>Doctor</option>
+                <option>Nurse</option>
+                <option>Pharmacist</option>
+                <option>Receptionist</option>
+                <option>Lab Technician</option>
               </select>
             </div>
 
+            {/* Email */}
             <div>
-              <label className='block text-sm font-semibold mb-2'>Email</label>
+              <label className='text-sm font-semibold block mb-1'>Email</label>
               <input
                 type='email'
                 value={email}
@@ -106,8 +108,9 @@ export default function LoginPage() {
               />
             </div>
 
+            {/* Password */}
             <div>
-              <label className='block text-sm font-semibold mb-2'>
+              <label className='text-sm font-semibold block mb-1'>
                 Password
               </label>
               <div className='relative'>
@@ -121,13 +124,14 @@ export default function LoginPage() {
                 <button
                   type='button'
                   onClick={() => setShowPassword(!showPassword)}
-                  className='absolute inset-y-0 right-4 flex items-center justify-center text-gray-500'
+                  className='absolute inset-y-0 right-4 flex items-center text-gray-500'
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
 
+            {/* Remember Me */}
             <div className='flex items-center justify-between text-sm'>
               <label className='flex items-center'>
                 <input
@@ -145,12 +149,12 @@ export default function LoginPage() {
 
             <button
               type='submit'
-              className='w-full py-3 bg-[#004990] text-white text-lg font-semibold rounded-full hover:bg-blue-800 transition'
+              className='w-full py-3 bg-[#004990] text-white font-semibold rounded-full hover:bg-blue-800 transition'
             >
               Sign In
             </button>
 
-            <p className='text-center text-sm text-gray-600 mt-4'>
+            <p className='text-center text-sm text-gray-600 mt-3'>
               Don’t have an account?{' '}
               <a
                 href='/register'
