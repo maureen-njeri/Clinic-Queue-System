@@ -54,22 +54,24 @@ export default function LoginPage() {
   }
 
   return (
-  <div className='w-screen h-screen flex flex-col md:flex-row bg-black text-white'>
-    {/* Left Side: Logo & Slogan */}
-    <div className='flex flex-col justify-center items-center p-6 w-full md:w-1/2 bg-black'>
-      <img
-        src='/first-response-logo.png'
-        alt='First Response Logo'
-        className='w-24 h-24 md:w-40 md:h-40 mb-4 object-contain'
-      />
-      <p className='text-center text-sm md:text-base text-gray-300'>
-        QUALITY • COMPASSION • INTEGRITY
-      </p>
+  <div className='flex flex-col md:flex-row h-screen w-screen'>
+    {/* Left: Logo + Slogan */}
+    <div className='flex w-full md:w-1/2 bg-black text-white items-center justify-center p-6'>
+      <div className='text-center'>
+        <img
+          src='/first-response-logo.png'
+          alt='First Response Logo'
+          className='w-28 h-28 md:w-40 md:h-40 mx-auto mb-4 object-contain'
+        />
+        <p className='text-sm md:text-base text-gray-300'>
+          QUALITY • COMPASSION • INTEGRITY
+        </p>
+      </div>
     </div>
 
-    {/* Right Side: Login Form */}
-    <div className='w-full md:w-1/2 flex justify-center items-center p-6 bg-white text-black'>
-      <div className='w-full max-w-md rounded-2xl shadow-xl p-8'>
+    {/* Right: Login Form */}
+    <div className='flex w-full md:w-1/2 items-center justify-center p-6 bg-white'>
+      <div className='w-full max-w-md text-black rounded-2xl shadow-xl p-8'>
         <h2 className='text-2xl font-bold text-center mb-6 text-[#004990]'>
           Sign In
         </h2>
