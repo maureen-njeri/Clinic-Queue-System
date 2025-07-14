@@ -54,114 +54,118 @@ export default function LoginPage() {
   }
 
   return (
-  <div className='flex flex-col md:flex-row h-screen w-screen'>
-    {/* Left: Logo + Slogan */}
-    <div className='flex w-full md:w-1/2 bg-black text-white items-center justify-center p-6'>
-      <div className='text-center'>
+    <div className='flex flex-col md:flex-row h-screen w-screen'>
+      {/* Left side - Logo & Slogan */}
+      <div className='hidden md:flex w-1/2 bg-black text-white flex-col justify-center items-center'>
         <img
           src='/first-response-logo.png'
-          alt='First Response Logo'
-          className='w-28 h-28 md:w-40 md:h-40 mx-auto mb-4 object-contain'
+          alt='First Response Clinic Logo'
+          className='w-32 h-32 md:w-40 md:h-40 mb-4 object-contain'
         />
-        <p className='text-sm md:text-base text-gray-300'>
+        <p className='text-center text-sm md:text-base text-gray-300'>
           QUALITY • COMPASSION • INTEGRITY
         </p>
       </div>
-    </div>
 
-    {/* Right: Login Form */}
-    <div className='flex w-full md:w-1/2 items-center justify-center p-6 bg-white'>
-      <div className='w-full max-w-md text-black rounded-2xl shadow-xl p-8'>
-        <h2 className='text-2xl font-bold text-center mb-6 text-[#004990]'>
-          Sign In
-        </h2>
-
-        {error && (
-          <p className='text-red-600 text-center font-medium mb-4'>{error}</p>
-        )}
-
-        <form onSubmit={handleSubmit} className='space-y-5'>
-          <div>
-            <label className='text-sm font-semibold block mb-1'>Role</label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className='w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400'
-            >
-              <option>Admin</option>
-              <option>Doctor</option>
-              <option>Nurse</option>
-              <option>Pharmacist</option>
-              <option>Receptionist</option>
-              <option>Lab Technician</option>
-            </select>
-          </div>
-
-          <div>
-            <label className='text-sm font-semibold block mb-1'>Email</label>
-            <input
-              type='email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className='w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400'
-            />
-          </div>
-
-          <div>
-            <label className='text-sm font-semibold block mb-1'>Password</label>
-            <div className='relative'>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className='w-full px-4 py-3 border border-gray-300 rounded-full pr-12 focus:outline-none focus:ring-2 focus:ring-blue-400'
-              />
-              <button
-                type='button'
-                onClick={() => setShowPassword(!showPassword)}
-                className='absolute inset-y-0 right-4 flex items-center text-gray-500'
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-          </div>
-
-          <div className='flex items-center justify-between text-sm'>
-            <label className='flex items-center'>
-              <input
-                type='checkbox'
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className='mr-2'
-              />
-              Remember me
-            </label>
-            <a href='#' className='text-blue-600 hover:underline'>
-              Forgot password?
-            </a>
-          </div>
-
-          <button
-            type='submit'
-            className='w-full py-3 bg-[#004990] text-white font-semibold rounded-full hover:bg-blue-800 transition'
-          >
+      {/* Right side - Login Form */}
+      <div className='w-full md:w-1/2 flex justify-center items-center bg-white p-6'>
+        <div className='w-full max-w-md text-black rounded-2xl shadow-xl p-8'>
+          <h2 className='text-2xl font-bold text-center mb-6 text-[#004990]'>
             Sign In
-          </button>
+          </h2>
 
-          <p className='text-center text-sm text-gray-600 mt-3'>
-            Don’t have an account?{' '}
-            <a
-              href='/register'
-              className='text-blue-600 hover:underline font-semibold'
+          {error && (
+            <p className='text-red-600 text-center font-medium mb-4'>{error}</p>
+          )}
+
+          <form onSubmit={handleSubmit} className='space-y-5'>
+            {/* Role */}
+            <div>
+              <label className='text-sm font-semibold block mb-1'>Role</label>
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className='w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400'
+              >
+                <option>Admin</option>
+                <option>Doctor</option>
+                <option>Nurse</option>
+                <option>Pharmacist</option>
+                <option>Receptionist</option>
+                <option>Lab Technician</option>
+              </select>
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className='text-sm font-semibold block mb-1'>Email</label>
+              <input
+                type='email'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className='w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400'
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className='text-sm font-semibold block mb-1'>
+                Password
+              </label>
+              <div className='relative'>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className='w-full px-4 py-3 border border-gray-300 rounded-full pr-12 focus:outline-none focus:ring-2 focus:ring-blue-400'
+                />
+                <button
+                  type='button'
+                  onClick={() => setShowPassword(!showPassword)}
+                  className='absolute inset-y-0 right-4 flex items-center text-gray-500'
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Remember Me + Forgot Password */}
+            <div className='flex items-center justify-between text-sm'>
+              <label className='flex items-center'>
+                <input
+                  type='checkbox'
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className='mr-2'
+                />
+                Remember me
+              </label>
+              <a href='#' className='text-blue-600 hover:underline'>
+                Forgot password?
+              </a>
+            </div>
+
+            <button
+              type='submit'
+              className='w-full py-3 bg-[#004990] text-white font-semibold rounded-full hover:bg-blue-800 transition'
             >
-              Sign Up
-            </a>
-          </p>
-        </form>
+              Sign In
+            </button>
+
+            <p className='text-center text-sm text-gray-600 mt-3'>
+              Don’t have an account?{' '}
+              <a
+                href='/register'
+                className='text-blue-600 hover:underline font-semibold'
+              >
+                Sign Up
+              </a>
+            </p>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
 }
