@@ -56,11 +56,11 @@ export default function LoginPage() {
   return (
     <div className='w-screen h-screen flex flex-col md:flex-row items-center justify-center bg-black text-white'>
       {/* Logo & Slogan - only shown on md and above */}
-      <div className='hidden md:flex w-1/2 max-w-md flex-col justify-center items-center p-6 bg-black'>
+      <div className='flex flex-col justify-center items-center p-6 w-full md:w-1/2 bg-black'>
         <img
           src='/first-response-logo.png'
           alt='First Response Logo'
-          className='w-36 h-36 md:w-40 md:h-40 mb-4 object-contain'
+          className='w-24 h-24 md:w-40 md:h-40 mb-4 object-contain'
         />
         <p className='text-center text-sm md:text-base text-gray-300'>
           QUALITY • COMPASSION • INTEGRITY
