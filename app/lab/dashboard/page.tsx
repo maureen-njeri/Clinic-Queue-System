@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import useSWR from 'swr'
 import {
   Upload, Plus, Search, Filter, Clock, CheckCircle,
   Download, Trash2, Eye, LogOut, Menu, X, AlertCircle, Beaker
@@ -49,15 +50,28 @@ export default function LabDashboard() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login')
-    } else if (status === 'authenticated') {
-      fetchTests()
-      const interval = setInterval(fetchTests, 10000)
-      return () => clearInterval(interval)
-    }
-  }, [status, router])
+const fetcher = async (url: string) => {
+  const res = await fetch(url)
+  if (!res.ok) throw new Error('Failed to fetch data')
+  return res.json()
+}
+
+const { data: testsData, error, isLoading } = useSWR(
+  status === 'authenticated' ? '/api/labtests' : null,
+  fetcher,
+  { refreshInterval: 10000 }
+)
+
+useEffect(() => {
+  if (status === 'unauthenticated') {
+    router.push('/login')
+  }
+}, [status, router])
+
+useEffect(() => {
+  if (testsData) setTests(testsData)
+}, [testsData])
+
 
   const fetchTests = async () => {
     try {
@@ -158,7 +172,7 @@ export default function LabDashboard() {
     completed: tests.filter(t => t.status === 'completed').length,
   }), [tests])
 
-  if (status === 'loading' || loading) {
+  if (status === 'loading' || isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
         <div className="text-center">
