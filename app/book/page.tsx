@@ -14,12 +14,28 @@ export default function BookPage() {
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
 
   useEffect(() => {
-    if (!touched.email || !email) return
+    // if email field is untouched, do nothing
+    if (!touched.email) return
+
+    // if email is empty, clear any previous email errors
+    if (!email) {
+      setErrors((prev) => {
+        const newErrors = { ...prev }
+        delete newErrors.email
+        return newErrors
+      })
+      return
+    }
+
+    // validate email only if user has entered one
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      setErrors(prev => ({ ...prev, email: 'Please enter a valid email' }))
+      setErrors((prev) => ({
+        ...prev,
+        email: 'Please enter a valid email address',
+      }))
     } else {
-      setErrors(prev => {
+      setErrors((prev) => {
         const newErrors = { ...prev }
         delete newErrors.email
         return newErrors
@@ -31,9 +47,12 @@ export default function BookPage() {
     if (!touched.phone || !phone) return
     const phoneRegex = /^07\d{8}$/
     if (!phoneRegex.test(phone)) {
-      setErrors(prev => ({ ...prev, phone: 'Phone must be 10 digits starting with 07' }))
+      setErrors((prev) => ({
+        ...prev,
+        phone: 'Phone must be 10 digits starting with 07',
+      }))
     } else {
-      setErrors(prev => {
+      setErrors((prev) => {
         const newErrors = { ...prev }
         delete newErrors.phone
         return newErrors
@@ -42,7 +61,7 @@ export default function BookPage() {
   }, [phone, touched.phone])
 
   const handleBlur = (field: string) => {
-    setTouched(prev => ({ ...prev, [field]: true }))
+    setTouched((prev) => ({ ...prev, [field]: true }))
   }
 
   async function handleSubmit() {
@@ -54,12 +73,11 @@ export default function BookPage() {
       email: true,
       phone: true,
       reason: true,
-      doctorType: true
+      doctorType: true,
     })
 
     const newErrors: { [key: string]: string } = {}
     if (!fullName.trim()) newErrors.fullName = 'Full name is required'
-    if (!email.trim()) newErrors.email = 'Email is required'
     if (!phone.trim()) newErrors.phone = 'Phone number is required'
     if (!reason) newErrors.reason = 'Please select a reason'
     if (!doctorType) newErrors.doctorType = 'Please select a doctor'
@@ -80,7 +98,9 @@ export default function BookPage() {
       const result = await response.json()
 
       if (response.ok) {
-        setMessage(`🎉 Success! Your queue number is ${result.data.queueNumber}`)
+        setMessage(
+          `🎉 Success! Your queue number is ${result.data.queueNumber}`
+        )
         setFullName('')
         setEmail('')
         setPhone('')
@@ -96,94 +116,102 @@ export default function BookPage() {
           })
           setErrors(fieldErrors)
         } else {
-          setErrors({ general: result.error || 'Something went wrong. Please try again.' })
+          setErrors({
+            general: result.error || 'Something went wrong. Please try again.',
+          })
         }
       }
     } catch (error) {
-      setErrors({ general: 'Network error. Please check your connection and try again.' })
+      setErrors({
+        general: 'Network error. Please check your connection and try again.',
+      })
     } finally {
       setIsSubmitting(false)
     }
   }
 
   const formFields = [
-    { 
-      label: 'Full Name', 
-      type: 'text', 
-      value: fullName, 
-      setValue: setFullName, 
-      field: 'fullName', 
+    {
+      label: 'Full Name',
+      type: 'text',
+      value: fullName,
+      setValue: setFullName,
+      field: 'fullName',
       placeholder: 'John Doe',
-      icon: '👤'
+      icon: '👤',
     },
-    { 
-      label: 'Email Address', 
-      type: 'email', 
-      value: email, 
-      setValue: setEmail, 
-      field: 'email', 
+    {
+      label: 'Email Address (optional)',
+      type: 'email',
+      value: email,
+      setValue: setEmail,
+      field: 'email',
       placeholder: 'john.doe@example.com',
-      icon: '✉️'
+      icon: '✉️',
     },
-    { 
-      label: 'Phone Number', 
-      type: 'tel', 
-      value: phone, 
-      setValue: setPhone, 
-      field: 'phone', 
-      placeholder: '0712345678', 
+    {
+      label: 'Phone Number',
+      type: 'tel',
+      value: phone,
+      setValue: setPhone,
+      field: 'phone',
+      placeholder: '0712345678',
       maxLength: 10,
-      icon: '📱'
+      icon: '📱',
     },
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
-      <div className="absolute inset-0 bg-black opacity-10"></div>
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-white opacity-5 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl animate-float-delayed"></div>
+    <div className='min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 flex items-center justify-center p-4 sm:p-6 relative overflow-hidden'>
+      <div className='absolute inset-0 bg-black opacity-10'></div>
+      <div className='absolute inset-0 overflow-hidden pointer-events-none'>
+        <div className='absolute top-20 left-10 w-72 h-72 bg-white opacity-5 rounded-full blur-3xl animate-float'></div>
+        <div className='absolute bottom-20 right-10 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl animate-float-delayed'></div>
       </div>
-      
-      <main className="relative max-w-lg w-full bg-white rounded-2xl shadow-2xl p-6 sm:p-8 animate-fadeIn">
-        <div className="text-center mb-6">
-          <div className="inline-block p-3 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full mb-3 shadow-lg animate-bounce-slow">
-            <span className="text-3xl">🏥</span>
+
+      <main className='relative max-w-lg w-full bg-white rounded-2xl shadow-2xl p-6 sm:p-8 animate-fadeIn'>
+        <div className='text-center mb-6'>
+          <div className='inline-block p-3 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full mb-3 shadow-lg animate-bounce-slow'>
+            <span className='text-3xl'>🏥</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          <h1 className='text-3xl font-bold text-gray-800 mb-2'>
             Book Your Appointment
           </h1>
-          <p className="text-gray-600">
+          <p className='text-gray-600'>
             Your health is our priority. Quick and easy booking.
           </p>
         </div>
 
         {message && (
-          <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg animate-slideDown shadow-sm">
-            <div className="flex items-center">
-              <span className="text-2xl mr-3">✅</span>
-              <p className="text-green-800 font-semibold">{message}</p>
+          <div className='mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg animate-slideDown shadow-sm'>
+            <div className='flex items-center'>
+              <span className='text-2xl mr-3'>✅</span>
+              <p className='text-green-800 font-semibold'>{message}</p>
             </div>
           </div>
         )}
 
         {errors.general && (
-          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg animate-slideDown shadow-sm">
-            <div className="flex items-center">
-              <span className="text-2xl mr-3">⚠️</span>
-              <p className="text-red-800 font-semibold">{errors.general}</p>
+          <div className='mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg animate-slideDown shadow-sm'>
+            <div className='flex items-center'>
+              <span className='text-2xl mr-3'>⚠️</span>
+              <p className='text-red-800 font-semibold'>{errors.general}</p>
             </div>
           </div>
         )}
 
-        <div className="space-y-5">
+        <div className='space-y-5'>
           {formFields.map((field, idx) => (
-            <div key={field.field} className="animate-slideUp" style={{ animationDelay: `${idx * 100}ms` }}>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <div
+              key={field.field}
+              className='animate-slideUp'
+              style={{ animationDelay: `${idx * 100}ms` }}
+            >
+              <label className='block text-sm font-semibold text-gray-700 mb-2'>
                 {field.label}
               </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg pointer-events-none">
+              <div className='relative'>
+                <span className='absolute left-3 top-1/2 -translate-y-1/2 text-lg pointer-events-none'>
                   {field.icon}
                 </span>
                 <input
@@ -202,24 +230,24 @@ export default function BookPage() {
                 />
               </div>
               {errors[field.field] && touched[field.field] && (
-                <p className="mt-1 text-sm text-red-600 flex items-center animate-fadeIn">
-                  <span className="mr-1">⚠</span>
+                <p className='mt-1 text-sm text-red-600 flex items-center animate-fadeIn'>
+                  <span className='mr-1'>⚠</span>
                   {errors[field.field]}
                 </p>
               )}
             </div>
           ))}
 
-          <div className="animate-slideUp" style={{ animationDelay: '300ms' }}>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <div className='animate-slideUp' style={{ animationDelay: '300ms' }}>
+            <label className='block text-sm font-semibold text-gray-700 mb-2'>
               Reason for Visit
             </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg z-10 pointer-events-none">
+            <div className='relative'>
+              <span className='absolute left-3 top-1/2 -translate-y-1/2 text-lg z-10 pointer-events-none'>
                 🩺
               </span>
-              <select 
-                value={reason} 
+              <select
+                value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 onBlur={() => handleBlur('reason')}
                 disabled={isSubmitting}
@@ -235,28 +263,28 @@ export default function BookPage() {
                 <option value='Follow-up'>📋 Follow-up</option>
                 <option value='Routine Check-up'>✓ Routine Check-up</option>
               </select>
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+              <span className='absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500'>
                 ▼
               </span>
             </div>
             {errors.reason && touched.reason && (
-              <p className="mt-1 text-sm text-red-600 flex items-center animate-fadeIn">
-                <span className="mr-1">⚠</span>
+              <p className='mt-1 text-sm text-red-600 flex items-center animate-fadeIn'>
+                <span className='mr-1'>⚠</span>
                 {errors.reason}
               </p>
             )}
           </div>
 
-          <div className="animate-slideUp" style={{ animationDelay: '400ms' }}>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+          <div className='animate-slideUp' style={{ animationDelay: '400ms' }}>
+            <label className='block text-sm font-semibold text-gray-700 mb-2'>
               Select Doctor Type
             </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg z-10 pointer-events-none">
+            <div className='relative'>
+              <span className='absolute left-3 top-1/2 -translate-y-1/2 text-lg z-10 pointer-events-none'>
                 👨‍⚕️
               </span>
-              <select 
-                value={doctorType} 
+              <select
+                value={doctorType}
                 onChange={(e) => setDoctorType(e.target.value)}
                 onBlur={() => handleBlur('doctorType')}
                 disabled={isSubmitting}
@@ -275,28 +303,40 @@ export default function BookPage() {
                 <option value='Cardiologist'>Cardiologist</option>
                 <option value='Neurologist'>Neurologist</option>
               </select>
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+              <span className='absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500'>
                 ▼
               </span>
             </div>
             {errors.doctorType && touched.doctorType && (
-              <p className="mt-1 text-sm text-red-600 flex items-center animate-fadeIn">
-                <span className="mr-1">⚠</span>
+              <p className='mt-1 text-sm text-red-600 flex items-center animate-fadeIn'>
+                <span className='mr-1'>⚠</span>
                 {errors.doctorType}
               </p>
             )}
           </div>
 
-          <button 
+          <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="w-full mt-6 py-3 px-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 hover:scale-[1.02] active:translate-y-0 active:scale-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg"
+            className='w-full mt-6 py-3 px-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 hover:scale-[1.02] active:translate-y-0 active:scale-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg'
           >
             {isSubmitting ? (
-              <span className="flex items-center justify-center">
-                <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <span className='flex items-center justify-center'>
+                <svg className='animate-spin h-5 w-5 mr-3' viewBox='0 0 24 24'>
+                  <circle
+                    className='opacity-25'
+                    cx='12'
+                    cy='12'
+                    r='10'
+                    stroke='currentColor'
+                    strokeWidth='4'
+                    fill='none'
+                  ></circle>
+                  <path
+                    className='opacity-75'
+                    fill='currentColor'
+                    d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                  ></path>
                 </svg>
                 Processing...
               </span>
@@ -306,48 +346,67 @@ export default function BookPage() {
           </button>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6 flex items-center justify-center">
-          <span className="mr-1">🔒</span>
+        <p className='text-center text-sm text-gray-500 mt-6 flex items-center justify-center'>
+          <span className='mr-1'>🔒</span>
           Your information is secure and confidential
         </p>
       </main>
 
       <style jsx>{`
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
         @keyframes slideUp {
-          from { 
-            opacity: 0; 
-            transform: translateY(20px); 
+          from {
+            opacity: 0;
+            transform: translateY(20px);
           }
-          to { 
-            opacity: 1; 
-            transform: translateY(0); 
+          to {
+            opacity: 1;
+            transform: translateY(0);
           }
         }
         @keyframes slideDown {
-          from { 
-            opacity: 0; 
-            transform: translateY(-20px); 
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
           }
-          to { 
-            opacity: 1; 
-            transform: translateY(0); 
+          to {
+            opacity: 1;
+            transform: translateY(0);
           }
         }
         @keyframes bounce-slow {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
         }
         @keyframes float {
-          0%, 100% { transform: translate(0, 0); }
-          50% { transform: translate(30px, -30px); }
+          0%,
+          100% {
+            transform: translate(0, 0);
+          }
+          50% {
+            transform: translate(30px, -30px);
+          }
         }
         @keyframes float-delayed {
-          0%, 100% { transform: translate(0, 0); }
-          50% { transform: translate(-30px, 30px); }
+          0%,
+          100% {
+            transform: translate(0, 0);
+          }
+          50% {
+            transform: translate(-30px, 30px);
+          }
         }
         .animate-fadeIn {
           animation: fadeIn 0.8s ease-out;
