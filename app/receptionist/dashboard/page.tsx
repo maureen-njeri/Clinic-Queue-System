@@ -252,20 +252,25 @@ export default function ReceptionistDashboard() {
             <StatCard
               label='Booked'
               value={
-                appointments?.filter((a) => a.status === 'waiting').length || 0
+                appointments?.filter(
+                  (a: { status: string }) => a.status === 'waiting'
+                ).length || 0
               }
             />
             <StatCard
               label='In Progress'
               value={
-                appointments?.filter((a) => a.status === 'in-progress')
-                  .length || 0
+                appointments?.filter(
+                  (a: { status: string }) => a.status === 'in-progress'
+                ).length || 0
               }
             />
             <StatCard
               label='Completed'
               value={
-                appointments?.filter((a) => a.status === 'done').length || 0
+                appointments?.filter(
+                  (a: { status: string }) => a.status === 'done'
+                ).length || 0
               }
             />
             <StatCard label='Today' value={appointments?.length || 0} />
@@ -425,7 +430,7 @@ export default function ReceptionistDashboard() {
                 </p>
               </div>
             ) : (
-              filteredAppointments.map((appointment) => (
+              filteredAppointments.map((appointment: Appointment) => (
                 <div
                   key={appointment._id}
                   className='bg-slate-800/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all'

@@ -298,24 +298,24 @@ export default function NurseDashboard() {
                 icon={<User className='w-4 h-4' />}
                 placeholder='Search by name'
                 value={filters.name}
-                onChange={(value) =>
-                  setFilters((prev) => ({ ...prev, name: value }))
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFilters((prev) => ({ ...prev, name: e.target.value }))
                 }
               />
               <FilterInput
                 icon={<Phone className='w-4 h-4' />}
                 placeholder='Search by phone'
                 value={filters.phone}
-                onChange={(value) =>
-                  setFilters((prev) => ({ ...prev, phone: value }))
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFilters((prev) => ({ ...prev, phone: e.target.value }))
                 }
               />
               <FilterInput
                 icon={<Stethoscope className='w-4 h-4' />}
                 placeholder='Search by doctor'
                 value={filters.doctor}
-                onChange={(value) =>
-                  setFilters((prev) => ({ ...prev, doctor: value }))
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFilters((prev) => ({ ...prev, doctor: e.target.value }))
                 }
               />
               <select

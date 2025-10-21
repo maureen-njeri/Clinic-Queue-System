@@ -3,7 +3,7 @@
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState, useMemo } from 'react'
-import useSWR from 'swr'
+import useSWR, { mutate } from 'swr'
 import toast from 'react-hot-toast'
 import {
   Clock,
@@ -109,13 +109,6 @@ export default function DoctorDashboard() {
     }
   }, [status, session, router])
 
-  // ✅ Define the fetcher function once
-  const fetcher = async (url: string) => {
-    const res = await fetch(url)
-    if (!res.ok) throw new Error('Failed to fetch data')
-    return res.json()
-  }
-
   // ✅ SWR handles auto-fetching every 5s
   const { data, error, isLoading } = useSWR(
     status === 'authenticated' ? '/api/appointment' : null,
@@ -190,7 +183,7 @@ export default function DoctorDashboard() {
       toast.success('Appointment updated successfully')
       setIsEditing(false)
       setExpandedId(null)
-      mutate()
+      mutate('/api/appointment')
     } catch {
       toast.error('Failed to save appointment')
     }
@@ -204,7 +197,7 @@ export default function DoctorDashboard() {
       if (!res.ok) throw new Error()
       toast.success('Appointment deleted')
       setDeleteConfirm(null)
-      fetchAppointments()
+      mutate('/api/appointment')
     } catch {
       toast.error('Failed to delete appointment')
     }
