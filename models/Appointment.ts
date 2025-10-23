@@ -3,6 +3,7 @@ import mongoose, { Schema } from 'mongoose'
 const AppointmentSchema = new Schema(
   {
     patient: { type: Schema.Types.ObjectId, ref: 'Patient', required: true },
+    doctorType: { type: String, required: true },
     queueNumber: { type: Number, required: false, default: null },
     status: {
       type: String,

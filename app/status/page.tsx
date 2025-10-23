@@ -76,31 +76,26 @@ export default function CheckStatus() {
     setError('')
     setIsLoading(true)
 
-    setTimeout(() => {
-      try {
-        const demoStatuses: StatusData[] = [
-          { queueNumber: 42, status: 'Processing' },
-          { queueNumber: 15, status: 'Ready for Pickup' },
-          { queueNumber: 89, status: 'In Queue' },
-          { queueNumber: 23, status: 'Complete' }
-        ]
-        
-        const randomStatus = demoStatuses[Math.floor(Math.random() * demoStatuses.length)]
-        
-        if (Math.random() > 0.3) {
-          setStatus(randomStatus)
-          setShowConfetti(true)
-          setTimeout(() => setShowConfetti(false), 3000)
-        } else {
-          setError('Could not find your record. Please verify your details and try again.')
-        }
-      } catch (err) {
-        setError('Something went wrong. Please try again.')
-      } finally {
-        setIsLoading(false)
-      }
-    }, 1200)
+    try {
+  const res = await fetch(
+    `/api/status?name=${encodeURIComponent(fullName)}&phone=${encodeURIComponent(phone)}`
+  )
+
+  const data = await res.json()
+
+  if (!res.ok) {
+    throw new Error(data.error || 'Record not found')
   }
+
+  setStatus(data.data) // ✅ your backend returns { data: { queueNumber, status } }
+  setShowConfetti(true)
+  setTimeout(() => setShowConfetti(false), 3000)
+} catch (err: any) {
+  setError(err.message || 'Something went wrong. Please try again.')
+} finally {
+  setIsLoading(false)
+}
+
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && fullName.trim() && phone.length === 10 && !isLoading) {

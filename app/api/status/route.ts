@@ -21,11 +21,16 @@ export async function GET(req: NextRequest) {
 
     await dbConnect()
 
-    const patient = await Patient.findOne({ fullName: name, phone })
+    // 🔹 Find the patient
+    const patient = await Patient.findOne({
+      fullName: name.trim(),
+      phone: phone.trim(),
+    })
     if (!patient) {
       return NextResponse.json({ error: 'Patient not found.' }, { status: 404 })
     }
 
+    // 🔹 Get their appointment
     const appointment = await Appointment.findOne({ patient: patient._id })
     if (!appointment) {
       return NextResponse.json(
@@ -34,9 +39,21 @@ export async function GET(req: NextRequest) {
       )
     }
 
+    // 🔹 Recalculate queue dynamically for the same doctor type
+    const allAppointments = await Appointment.find({
+      doctorType: appointment.doctorType,
+      status: { $in: ['waiting', 'in-progress'] },
+    }).sort({ createdAt: 1 })
+
+    // 🔹 Find the patient’s live queue position
+    const queueIndex = allAppointments.findIndex((a) =>
+      a._id.equals(appointment._id)
+    )
+    const queuePosition = queueIndex >= 0 ? queueIndex + 1 : 1
+
     return NextResponse.json({
       data: {
-        queueNumber: appointment.queueNumber,
+        queueNumber: queuePosition,
         status: appointment.status,
       },
     })
