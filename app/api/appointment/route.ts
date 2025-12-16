@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
     await Appointment.create({
       patient: patient._id,
       queueNumber: nextQueue,
+      doctorType,
     })
 
     // ✅ Optional email notification

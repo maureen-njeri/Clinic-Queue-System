@@ -66,6 +66,8 @@ export default function ReceptionistDashboard() {
   const [rescheduleForm, setRescheduleForm] = useState({
     reason: '',
     doctorType: '',
+    appointmentDate: '',
+    appointmentTime: '',
   })
 
   const [form, setForm] = useState({
@@ -158,20 +160,43 @@ export default function ReceptionistDashboard() {
   }
 
   const handleReschedule = async (id: string) => {
-    if (!rescheduleForm.reason || !rescheduleForm.doctorType) {
-      toast.error('Please fill in both reason and doctor')
+    if (
+      !rescheduleForm.reason ||
+      !rescheduleForm.doctorType ||
+      !rescheduleForm.appointmentDate ||
+      !rescheduleForm.appointmentTime
+    ) {
+      toast.error('All reschedule fields are required')
       return
     }
 
     try {
-      const res = await fetch(`/api/appointment/${id}/status`, {
+      const res = await fetch(`/api/appointment/${id}/reschedule`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(rescheduleForm),
+        body: JSON.stringify({
+          reason: rescheduleForm.reason,
+          doctorType: rescheduleForm.doctorType,
+          appointmentDate: rescheduleForm.appointmentDate,
+          appointmentTime: rescheduleForm.appointmentTime,
+
+          // ✅ FORCE BACK TO QUEUE
+          status: 'waiting',
+        }),
       })
+
       if (!res.ok) throw new Error()
-      toast.success('Appointment rescheduled')
+
+      toast.success('Appointment rescheduled & returned to queue')
+
       setRescheduleId('')
+      setRescheduleForm({
+        reason: '',
+        doctorType: '',
+        appointmentDate: '',
+        appointmentTime: '',
+      })
+
       mutate()
     } catch {
       toast.error('Failed to reschedule appointment')
@@ -495,6 +520,8 @@ export default function ReceptionistDashboard() {
                         setRescheduleForm({
                           reason: appointment.patient?.reason || '',
                           doctorType: appointment.patient?.doctorType || '',
+                          appointmentDate: appointment.appointmentDate || '',
+                          appointmentTime: appointment.appointmentTime || '',
                         })
                       }}
                       className='flex items-center gap-2 px-4 py-2 bg-yellow-600/20 hover:bg-yellow-600/30 text-yellow-300 rounded-lg transition-all border border-yellow-500/20'
